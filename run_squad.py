@@ -1152,7 +1152,8 @@ def main(_):
         cluster=tpu_cluster_resolver,
         master=FLAGS.master,
         model_dir=FLAGS.output_dir,
-        save_checkpoints_steps=FLAGS.save_checkpoints_steps,
+        save_summary_steps=100,
+        save_checkpoints_steps=5000,
         tpu_config=tf.contrib.tpu.TPUConfig(
             iterations_per_loop=FLAGS.iterations_per_loop,
             num_shards=FLAGS.num_tpu_cores,
@@ -1214,17 +1215,12 @@ def main(_):
         tf.logging.info("  Num steps = %d", num_train_steps)
         del train_examples
 
-        run_config = tf.estimator.RunConfig(
-            model_dir=FLAGS.output_dir,
-            save_summary_steps=100,
-            save_checkpoints_steps=5000)
-
         train_input_fn = input_fn_builder(
             input_file=train_writer.filename,
             seq_length=FLAGS.max_seq_length,
             is_training=True,
             drop_remainder=True)
-        estimator.train(input_fn=train_input_fn, max_steps=num_train_steps, config=run_config)
+        estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
 
     if FLAGS.do_predict:
         eval_examples = read_squad_examples(
