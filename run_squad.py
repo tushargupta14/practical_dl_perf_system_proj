@@ -121,6 +121,8 @@ flags.DEFINE_integer(
 
 flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
+flags.DEFINE_bool("use_lr_decay", True, "Whether to decay learning rate polynomially.")
+
 tf.flags.DEFINE_string(
     "tpu_name", None,
     "The Cloud TPU to use for training. This should be either the name "
@@ -1212,12 +1214,17 @@ def main(_):
         tf.logging.info("  Num steps = %d", num_train_steps)
         del train_examples
 
+        run_config = tf.estimator.RunConfig(
+            model_dir=FLAGS.output_dir,
+            save_summary_steps=100,
+            save_checkpoints_steps=5000)
+
         train_input_fn = input_fn_builder(
             input_file=train_writer.filename,
             seq_length=FLAGS.max_seq_length,
             is_training=True,
             drop_remainder=True)
-        estimator.train(input_fn=train_input_fn, max_steps=num_train_steps)
+        estimator.train(input_fn=train_input_fn, max_steps=num_train_steps, config=run_config)
 
     if FLAGS.do_predict:
         eval_examples = read_squad_examples(
