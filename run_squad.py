@@ -1131,7 +1131,7 @@ def validate_flags_or_throw(bert_config):
 
 
 def main(_):
-    tf.logging.set_verbosity(tf.logging.ERROR)
+    tf.logging.set_verbosity(tf.logging.INFO)
 
     bert_config = modeling.BertConfig.from_json_file(FLAGS.bert_config_file)
 
