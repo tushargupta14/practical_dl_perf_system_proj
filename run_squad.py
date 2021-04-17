@@ -123,6 +123,8 @@ flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
 flags.DEFINE_bool("use_lr_decay", True, "Whether to decay learning rate polynomially.")
 
+flags.DEFINE_bool("use_modified_embed", False, "Whether to decay learning rate polynomially.")
+
 tf.flags.DEFINE_string(
     "tpu_name", None,
     "The Cloud TPU to use for training. This should be either the name "
@@ -554,8 +556,8 @@ def _check_is_max_context(doc_spans, cur_span_index, position):
     return cur_span_index == best_span_index
 
 
-def create_model(bert_config, is_training, input_ids, input_mask, segment_ids,
-                 use_one_hot_embeddings):
+def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, use_one_hot_embeddings,
+                 use_modified_embed=False):
     """Creates a classification model."""
     model = modeling.BertModel(
         config=bert_config,
@@ -613,13 +615,10 @@ def model_fn_builder(bert_config, init_checkpoint, learning_rate,
 
         is_training = (mode == tf.estimator.ModeKeys.TRAIN)
 
-        (start_logits, end_logits) = create_model(
-            bert_config=bert_config,
-            is_training=is_training,
-            input_ids=input_ids,
-            input_mask=input_mask,
-            segment_ids=segment_ids,
-            use_one_hot_embeddings=use_one_hot_embeddings)
+        (start_logits, end_logits) = create_model(bert_config=bert_config, is_training=is_training, input_ids=input_ids,
+                                                  input_mask=input_mask, segment_ids=segment_ids,
+                                                  use_one_hot_embeddings=use_one_hot_embeddings,
+                                                  use_modified_embed = FLAGS.use_modified_embed)
 
         tvars = tf.trainable_variables()
 
