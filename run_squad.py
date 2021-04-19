@@ -569,7 +569,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
 
     if use_modified_embed:
         hidden_states = model.get_all_encoder_layers()
-        print("Length of hidden states:", len(hidden_states), len(hidden_states[0]))
+        print("shape of hidden states:>", hidden_states.shape )
         final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
         print("Tensor shape>", final_hidden_state.get_shape())
 
