@@ -569,6 +569,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
 
     if use_modified_embed:
         hidden_states = model.get_all_encoder_layers()
+        print("Length of hidden states:", len(hidden_states), len(hidden_states[0]))
         final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
         print("Tensor shape>", final_hidden_state.get_shape())
 
@@ -587,7 +588,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
     output_bias = tf.get_variable(
         "cls/squad/output_bias", [2], initializer=tf.zeros_initializer())
 
-    final_hidden_matrix = tf.reshape(final_hidden,
+    final_hidden_matrix = tf.reshape(final_hidden_state,
                                      [batch_size * seq_length, hidden_size])
     logits = tf.matmul(final_hidden_matrix, output_weights, transpose_b=True)
     logits = tf.nn.bias_add(logits, output_bias)
