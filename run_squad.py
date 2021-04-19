@@ -569,7 +569,8 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
 
     #final_hidden = model.get_sequence_output()
     hidden_states = model.all_encoder_layers[:-4]
-    print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape)
+    final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
+    print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape(final_hidden_state))
     final_hidden_shape = modeling.get_shape_list(hidden_states, expected_rank=3)
     batch_size = final_hidden_shape[0]
     seq_length = final_hidden_shape[1]
@@ -1185,13 +1186,16 @@ def main(_):
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.
-    estimator = tf.contrib.tpu.TPUEstimator(
-        use_tpu=FLAGS.use_tpu,
-        model_fn=model_fn,
-        config=run_config,
-        train_batch_size=FLAGS.train_batch_size,
-        predict_batch_size=FLAGS.predict_batch_size)
-
+    # estimator = tf.contrib.tpu.TPUEstimator(
+    #     use_tpu=FLAGS.use_tpu,
+    #     model_fn=model_fn,
+    #     config=run_config,
+    #     train_batch_size=FLAGS.train_batch_size,
+    #     predict_batch_size=FLAGS.predict_batch_size)
+    estimator = tf.estimator.Estimator(
+        model_fn, model_dir=None, config=run_config, params=None, warm_start_from=None
+    )
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>Here1>>>>>>>>>>>>>>>>>>>>>")
     if FLAGS.do_train:
         # We write to a temporary file to avoid storing very large constant tensors
         # in memory.
