@@ -1186,15 +1186,15 @@ def main(_):
 
     # If TPU is not available, this will fall back to normal Estimator on CPU
     # or GPU.
-    # estimator = tf.contrib.tpu.TPUEstimator(
-    #     use_tpu=FLAGS.use_tpu,
-    #     model_fn=model_fn,
-    #     config=run_config,
-    #     train_batch_size=FLAGS.train_batch_size,
-    #     predict_batch_size=FLAGS.predict_batch_size)
-    estimator = tf.estimator.Estimator(
-        model_fn, model_dir=None, config=run_config, params=None, warm_start_from=None
-    )
+    estimator = tf.contrib.tpu.TPUEstimator(
+        use_tpu=FLAGS.use_tpu,
+        model_fn=model_fn,
+        config=run_config,
+        train_batch_size=FLAGS.train_batch_size,
+        predict_batch_size=FLAGS.predict_batch_size)
+    # estimator = tf.estimator.Estimator(
+    #     model_fn, model_dir=None, config=run_config, params=None, warm_start_from=None
+    # )
     print(">>>>>>>>>>>>>>>>>>>>>>>>>>>Here1>>>>>>>>>>>>>>>>>>>>>")
     if FLAGS.do_train:
         # We write to a temporary file to avoid storing very large constant tensors
