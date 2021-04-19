@@ -567,13 +567,19 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
         token_type_ids=segment_ids,
         use_one_hot_embeddings=use_one_hot_embeddings)
 
-    final_hidden = model.get_sequence_output()
+    if use_modified_embed:
+        hidden_states = model.get_all_encoder_layers()[:-4]
+        final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
+        print("Tensor shape>", final_hidden_state.get_shape())
 
-    final_hidden_shape = modeling.get_shape_list(final_hidden, expected_rank=3)
+    else:
+        final_hidden_state = model.get_sequence_output()
+
+    final_hidden_shape = modeling.get_shape_list(final_hidden_state, expected_rank=3)
     batch_size = final_hidden_shape[0]
     seq_length = final_hidden_shape[1]
     hidden_size = final_hidden_shape[2]
-
+    tf.logging.info("Tensor shape> {},{},{}".format(batch_size, seq_length, hidden_size))
     output_weights = tf.get_variable(
         "cls/squad/output_weights", [2, hidden_size],
         initializer=tf.truncated_normal_initializer(stddev=0.02))
