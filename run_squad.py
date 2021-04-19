@@ -123,7 +123,7 @@ flags.DEFINE_bool("use_tpu", False, "Whether to use TPU or GPU/CPU.")
 
 flags.DEFINE_bool("use_lr_decay", True, "Whether to decay learning rate polynomially.")
 
-flags.DEFINE_bool("use_modified_embed", False, "Whether to decay learning rate polynomially.")
+flags.DEFINE_bool("use_modified_embed", False, "Whether to use modified embeddings")
 
 tf.flags.DEFINE_string(
     "tpu_name", None,
@@ -567,9 +567,10 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
         token_type_ids=segment_ids,
         use_one_hot_embeddings=use_one_hot_embeddings)
 
-    final_hidden = model.get_sequence_output()
-
-    final_hidden_shape = modeling.get_shape_list(final_hidden, expected_rank=3)
+    #final_hidden = model.get_sequence_output()
+    hidden_states = model.all_encoder_layers()
+    print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape)
+    final_hidden_shape = modeling.get_shape_list(hidden_states, expected_rank=3)
     batch_size = final_hidden_shape[0]
     seq_length = final_hidden_shape[1]
     hidden_size = final_hidden_shape[2]
