@@ -569,7 +569,10 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
 
     if use_modified_embed:
         hidden_states = model.get_all_encoder_layers()
-        print("shape of hidden states:>", hidden_states.shape )
+        try :
+            print("shape of hidden states:>", hidden_states.get_shape() )
+        except Exception as e:
+            print(e)
         final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
         print("Tensor shape>", final_hidden_state.get_shape())
 
