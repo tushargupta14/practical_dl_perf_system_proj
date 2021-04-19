@@ -568,10 +568,11 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
         use_one_hot_embeddings=use_one_hot_embeddings)
 
     #final_hidden = model.get_sequence_output()
-    hidden_states = model.all_encoder_layers[:-4]
+    hidden_states = model.get_all_encoder_layers()
+    print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape(hidden_states))
     final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
     print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape(final_hidden_state))
-    final_hidden_shape = modeling.get_shape_list(hidden_states, expected_rank=3)
+    final_hidden_shape = modeling.get_shape_list(final_hidden_state, expected_rank=3)
     batch_size = final_hidden_shape[0]
     seq_length = final_hidden_shape[1]
     hidden_size = final_hidden_shape[2]
