@@ -568,7 +568,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
         use_one_hot_embeddings=use_one_hot_embeddings)
 
     #final_hidden = model.get_sequence_output()
-    hidden_states = model.all_encoder_layers()
+    hidden_states = model.all_encoder_layers[:-4]
     print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", tf.shape)
     final_hidden_shape = modeling.get_shape_list(hidden_states, expected_rank=3)
     batch_size = final_hidden_shape[0]
@@ -980,7 +980,7 @@ def get_final_text(pred_text, orig_text, do_lower_case):
 
     start_position = tok_text.find(pred_text)
     if start_position == -1:
-        if FLAGS.verbose_logging:
+        if FLAGS.verbose_logginglogging:
             tf.logging.info(
                 "Unable to find text: '%s' in '%s'" % (pred_text, orig_text))
         return orig_text
@@ -1141,24 +1141,24 @@ def main(_):
 
     tokenizer = tokenization.FullTokenizer(
         vocab_file=FLAGS.vocab_file, do_lower_case=FLAGS.do_lower_case)
-
-    tpu_cluster_resolver = None
-    if FLAGS.use_tpu and FLAGS.tpu_name:
-        tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
-            FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
-
-    is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
-    run_config = tf.contrib.tpu.RunConfig(
-        cluster=tpu_cluster_resolver,
-        master=FLAGS.master,
-        model_dir=FLAGS.output_dir,
-        save_summary_steps=100,
-        save_checkpoints_steps=5000,
-        tpu_config=tf.contrib.tpu.TPUConfig(
-            iterations_per_loop=FLAGS.iterations_per_loop,
-            num_shards=FLAGS.num_tpu_cores,
-            per_host_input_for_training=is_per_host))
-
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>Here>>>>>>>>>>>>>>>>>>>>>")
+    # tpu_cluster_resolver = None
+    # if FLAGS.use_tpu and FLAGS.tpu_name:
+    #     tpu_cluster_resolver = tf.contrib.cluster_resolver.TPUClusterResolver(
+    #         FLAGS.tpu_name, zone=FLAGS.tpu_zone, project=FLAGS.gcp_project)
+    #
+    # is_per_host = tf.contrib.tpu.InputPipelineConfig.PER_HOST_V2
+    # run_config = tf.contrib.tpu.RunConfig(
+    #     cluster=tpu_cluster_resolver,
+    #     master=FLAGS.master,
+    #     model_dir=FLAGS.output_dir,
+    #     save_summary_steps=100,
+    #     save_checkpoints_steps=5000,
+    #     tpu_config=tf.contrib.tpu.TPUConfig(
+    #         iterations_per_loop=FLAGS.iterations_per_loop,
+    #         num_shards=FLAGS.num_tpu_cores,
+    #         per_host_input_for_training=is_per_host))
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>Here>>>>>>>>>>>>>>>>>>>>>")
     train_examples = None
     num_train_steps = None
     num_warmup_steps = None
@@ -1173,7 +1173,7 @@ def main(_):
         # buffer in in the `input_fn`.
         rng = random.Random(12345)
         rng.shuffle(train_examples)
-
+    print(">>>>>>>>>>>>>>>>>>>>>>>>>>>Here>>>>>>>>>>>>>>>>>>>>>")
     model_fn = model_fn_builder(
         bert_config=bert_config,
         init_checkpoint=FLAGS.init_checkpoint,
