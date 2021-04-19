@@ -569,7 +569,7 @@ def create_model(bert_config, is_training, input_ids, input_mask, segment_ids, u
 
     #final_hidden = model.get_sequence_output()
     hidden_states = model.get_all_encoder_layers()
-    print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", hidden_states.get_shape())
+    #print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", hidden_states.get_shape())
     final_hidden_state = tf.reduce_mean(hidden_states, axis=0)
     print(">>>>>>>>>>>>>>>>>>>>>>>>> Tensor shape>>>>>>>>>>>>>>>>>>", final_hidden_state.get_shape())
     final_hidden_shape = modeling.get_shape_list(final_hidden_state, expected_rank=3)
